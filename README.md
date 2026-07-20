@@ -1,19 +1,28 @@
-# Scotland Roadbook v2
+# Scotland Roadbook v2.2
 
-En mobilanpassad PWA för resan 5–17 augusti.
+En färdig, mobilanpassad PWA för campervanresan 5–17 augusti.
 
-## Nytt i v2
-- Modern CARTO-baskarta utan topografiskt brus
-- Fast appnavigation
-- Dag-för-dag-roadbook med rekommenderad ordning
-- Google Maps-rutt per dag
-- Platskort som öppnas som mobil bottom sheet
-- Favoriter och besökta platser sparas lokalt
+## Funktioner
+- Modern CARTO Voyager-karta, med separat mörk kartstil
+- Fast appnavigation för översikt, karta, resplan och sparat
+- 13 resdagar och 39 utvalda stopp
+- Dag-för-dag-roadbook med körsträckor, tider och rekommenderad ordning
+- Google Maps-navigation för varje stopp och dagsrutt
+- Platskort i mobil bottom sheet
+- Campervan- och parkeringsinformation
+- Favoriter och besökta platser
+- Egna anteckningar per plats, sparade lokalt
+- GPS-position
 - Mörkt läge
-- GPS-knapp
-- Installerbar PWA
+- Installerbar PWA för iPhone och Android
+- Offline-cache för appens grundfiler
 
-## Uppdatera GitHub Pages
-Ladda upp samtliga filer till roten i repositoryt `Scotland` och ersätt de gamla filerna. Behåll filnamnen exakt som de är. GitHub Pages publicerar normalt ändringen inom några minuter.
+## Publicera på GitHub Pages
+1. Packa upp ZIP-filen.
+2. Gå till repositoryt `Scotland`.
+3. Välj **Add file → Upload files**.
+4. Dra in samtliga filer från den uppackade mappen.
+5. GitHub ersätter filer som har samma namn. Du behöver inte radera dem först.
+6. Klicka **Commit changes**.
 
-Efter publicering kan en gammal service worker ligga kvar i cache. På iPhone kan du stänga webbappen helt och öppna igen. Vid behov raderar du webbplatsdata för sidan i Safari-inställningarna.
+GitHub Pages uppdateras normalt inom några minuter. Om den gamla versionen ligger kvar, stäng webbappen helt och öppna den igen. På iPhone kan Safari-cache behöva rensas för sidan.
