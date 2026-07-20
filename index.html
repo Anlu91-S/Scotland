@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#10231d" />
+  <meta name="description" content="En personlig digital roadbook för en campervanresa genom Skottland och Yttre Hebriderna." />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icon-192.png" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
+  <link rel="preconnect" href="https://a.basemaps.cartocdn.com" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <link rel="stylesheet" href="./styles.css" />
+  <title>Scotland Roadbook</title>
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <header class="topbar">
+      <a href="#today" class="brand" aria-label="Scotland Roadbook startsida">
+        <span class="brand-mark">S</span>
+        <span><strong>Scotland</strong><small>Roadbook</small></span>
+      </a>
+      <div class="topbar-actions">
+        <button id="installBtn" class="icon-action" hidden aria-label="Installera appen"><i data-lucide="download"></i></button>
+        <button id="themeBtn" class="icon-action" aria-label="Växla mörkt läge"><i data-lucide="moon"></i></button>
+      </div>
+    </header>
+
+    <main>
+      <section id="today" class="hero-card section-view active" data-view="today">
+        <div class="hero-image" aria-hidden="true"></div>
+        <div class="hero-gradient"></div>
+        <div class="hero-content">
+          <span class="kicker">DIN PERSONLIGA ROADBOOK</span>
+          <h1>Skottland.<br><em>På riktigt.</em></h1>
+          <p>5–17 augusti · Glasgow → Hebriderna → Glasgow</p>
+          <div class="hero-actions">
+            <button class="primary-button" data-open-view="plan"><i data-lucide="route"></i> Öppna resplanen</button>
+            <button class="glass-button" data-open-view="map"><i data-lucide="map"></i> Visa kartan</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="dashboard section-view active" data-view="today">
+        <div class="section-heading compact">
+          <div><span class="kicker">RESA I KORTHET</span><h2>Din roadbook</h2></div>
+          <span class="trip-badge">12 nätter</span>
+        </div>
+        <div class="metric-grid">
+          <article><i data-lucide="map-pinned"></i><strong id="placeCount">38</strong><span>utvalda stopp</span></article>
+          <article><i data-lucide="ship"></i><strong>2</strong><span>färjeöverfarter</span></article>
+          <article><i data-lucide="heart"></i><strong id="favoriteCount">0</strong><span>favoriter</span></article>
+          <article><i data-lucide="circle-check"></i><strong id="visitedCount">0</strong><span>besökta</span></article>
+        </div>
+
+        <article class="next-card">
+          <div class="next-card-copy">
+            <span class="kicker">BÖRJA HÄR</span>
+            <h3>Dag 1 · Loch Lomond</h3>
+            <p>En mjuk start med utsikt, byliv och middag vid vattnet.</p>
+            <div class="quick-meta"><span><i data-lucide="car-front"></i> Glasgow → Luss</span><span><i data-lucide="clock-3"></i> Flexibel dag</span></div>
+          </div>
+          <button class="round-button" data-day="d1" aria-label="Öppna dag 1"><i data-lucide="arrow-up-right"></i></button>
+        </article>
+
+        <div class="section-heading"><div><span class="kicker">HÖJDPUNKTER</span><h2>Resan i fyra kapitel</h2></div></div>
+        <div class="chapter-scroll">
+          <button class="chapter-card" data-day="d2"><span class="chapter-image glencoe"></span><span><small>KAPITEL 01</small><strong>Glencoe</strong><em>Dramatiska dalar</em></span></button>
+          <button class="chapter-card" data-day="d5"><span class="chapter-image skye"></span><span><small>KAPITEL 02</small><strong>Isle of Skye</strong><em>Vandring & kust</em></span></button>
+          <button class="chapter-card" data-day="d7"><span class="chapter-image harris"></span><span><small>KAPITEL 03</small><strong>Harris & Lewis</strong><em>Stränder & historia</em></span></button>
+          <button class="chapter-card" data-day="d11"><span class="chapter-image stirling"></span><span><small>KAPITEL 04</small><strong>Lowlands</strong><em>Slott & småstäder</em></span></button>
+        </div>
+      </section>
+
+      <section class="section-view map-view" data-view="map" hidden>
+        <div class="map-header">
+          <div><span class="kicker">INTERAKTIV KARTA</span><h1>Hela resan</h1></div>
+          <button id="locateBtn" class="secondary-button"><i data-lucide="locate-fixed"></i> Min position</button>
+        </div>
+        <div class="filter-bar" id="categoryFilters"></div>
+        <div class="map-stage">
+          <div id="map" aria-label="Karta över resan"></div>
+          <div class="map-floating-panel">
+            <span><strong id="visibleCount">38</strong> stopp</span>
+            <span class="divider"></span>
+            <button id="fitRouteBtn"><i data-lucide="maximize-2"></i> Visa hela rutten</button>
+          </div>
+        </div>
+        <div class="map-list-header"><h2>Platser på kartan</h2><button id="resetFilters" class="text-button">Återställ</button></div>
+        <div id="mapPlaces" class="compact-place-list"></div>
+      </section>
+
+      <section class="section-view plan-view" data-view="plan" hidden>
+        <div class="section-heading plan-heading">
+          <div><span class="kicker">DAG FÖR DAG</span><h1>Resplan</h1><p>En tydlig plan, utan att låsa resan.</p></div>
+        </div>
+        <div id="dayRail" class="day-rail"></div>
+        <article id="dayHero" class="day-hero"></article>
+        <div class="plan-layout">
+          <section>
+            <div class="subheading"><span class="kicker">REKOMMENDERAD ORDNING</span><h2>Dagens stopp</h2></div>
+            <div id="timeline" class="timeline"></div>
+          </section>
+          <aside id="dayGuide" class="day-guide"></aside>
+        </div>
+      </section>
+
+      <section class="section-view saved-view" data-view="saved" hidden>
+        <div class="section-heading"><div><span class="kicker">DITT URVAL</span><h1>Sparat</h1><p>Favoriter, besökta platser och anteckningar.</p></div></div>
+        <div class="saved-tabs"><button class="active" data-saved-tab="favorites">Favoriter <span id="favTabCount">0</span></button><button data-saved-tab="visited">Besökta <span id="visitedTabCount">0</span></button></div>
+        <div id="savedPlaces" class="saved-grid"></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Huvudnavigation">
+      <button class="active" data-nav="today"><i data-lucide="compass"></i><span>Översikt</span></button>
+      <button data-nav="map"><i data-lucide="map"></i><span>Karta</span></button>
+      <button data-nav="plan"><i data-lucide="calendar-days"></i><span>Resplan</span></button>
+      <button data-nav="saved"><i data-lucide="heart"></i><span>Sparat</span></button>
+    </nav>
+  </div>
+
+  <div id="placeSheet" class="sheet" aria-hidden="true">
+    <button class="sheet-backdrop" data-close-sheet aria-label="Stäng"></button>
+    <article class="sheet-card">
+      <div class="sheet-handle"></div>
+      <button class="sheet-close" data-close-sheet aria-label="Stäng"><i data-lucide="x"></i></button>
+      <div id="sheetContent"></div>
+    </article>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
