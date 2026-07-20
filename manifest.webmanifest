@@ -1,14 +1,169 @@
-{
-  "name":"Scotland Roadbook",
-  "short_name":"Scotland",
-  "description":"Personlig digital roadbook för campervanresan genom Skottland.",
-  "start_url":"./",
-  "scope":"./",
-  "display":"standalone",
-  "background_color":"#f5f2ea",
-  "theme_color":"#10231d",
-  "icons":[
-    {"src":"./icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
-    {"src":"./icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
-  ]
-}
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#15231d" />
+  <meta name="description" content="En personlig digital roadbook för 13 dagar genom Skottland och Yttre Hebriderna." />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icon-192.png" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
+  <link rel="preconnect" href="https://a.basemaps.cartocdn.com" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <link rel="stylesheet" href="./styles.css" />
+  <title>Scotland Roadbook</title>
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <header class="topbar">
+      <button class="brand" data-open-view="today" aria-label="Öppna startsidan">
+        <span class="brand-mark">SR</span>
+        <span class="brand-copy"><strong>Scotland Roadbook</strong><small>05—17 AUG · 2026</small></span>
+      </button>
+      <div class="topbar-actions">
+        <button id="savedBtn" class="icon-action" aria-label="Visa sparade platser"><i data-lucide="heart"></i><span id="headerFavCount" class="count-dot">0</span></button>
+        <button id="installBtn" class="icon-action" hidden aria-label="Installera appen"><i data-lucide="download"></i></button>
+        <button id="themeBtn" class="icon-action" aria-label="Växla mörkt läge"><i data-lucide="moon"></i></button>
+      </div>
+    </header>
+
+    <main>
+      <section class="section-view active" data-view="today">
+        <article class="hero-card">
+          <img src="./images/glencoe.jpg" alt="Glencoe med berg och dalgång" fetchpriority="high" />
+          <div class="hero-shade"></div>
+          <div class="hero-index">01 / HIGHLANDS</div>
+          <div class="hero-content">
+            <span class="eyebrow light">EN PERSONLIG EXPEDITION GENOM SKOTTLAND</span>
+            <h1>Där vägen slutar<br><em>börjar resan.</em></h1>
+            <p>Från Loch Lomond till Yttre Hebriderna. Två färjor, tretton dagar och en roadbook byggd för vägen framför dig.</p>
+            <div class="hero-actions">
+              <button class="button primary" data-open-view="plan"><i data-lucide="route"></i> Öppna resplanen</button>
+              <button class="button ghost" data-open-view="areas"><i data-lucide="book-open"></i> Utforska områden</button>
+            </div>
+          </div>
+          <div class="hero-stamp"><strong>13</strong><span>DAGAR</span></div>
+        </article>
+
+        <section class="home-content">
+          <div class="section-title editorial-title">
+            <div><span class="eyebrow">ROADBOOK / ÖVERSIKT</span><h2>Resan i korthet</h2></div>
+            <span class="edition-tag">Utgåva 2.3</span>
+          </div>
+          <div class="metric-strip">
+            <article><strong id="placeCount">39</strong><span>utvalda stopp</span></article>
+            <article><strong>2</strong><span>färjeöverfarter</span></article>
+            <article><strong id="favoriteCount">0</strong><span>favoriter</span></article>
+            <article><strong id="visitedCount">0</strong><span>besökta</span></article>
+          </div>
+
+          <article class="dispatch-card">
+            <div class="dispatch-no">DAG 01</div>
+            <div class="dispatch-copy">
+              <span class="eyebrow">FÖRSTA ETAPPEN</span>
+              <h3>Glasgow → Loch Lomond</h3>
+              <p>Börja med Conic Hill, fortsätt genom Luss och avsluta kvällen vid vattnet. En mjuk öppning innan högländerna tar över.</p>
+              <div class="meta-row"><span><i data-lucide="car-front"></i> ca 55 km</span><span><i data-lucide="clock-3"></i> flexibel dag</span><span><i data-lucide="bed-double"></i> Loch Lomond</span></div>
+            </div>
+            <button class="arrow-button" data-day="d1" aria-label="Öppna dag 1"><i data-lucide="arrow-up-right"></i></button>
+          </article>
+
+          <div class="section-title">
+            <div><span class="eyebrow">FÄLTGUIDER</span><h2>Sju områden. Ett större äventyr.</h2><p>Vandringar, restauranger, camping och handplockade saker att göra.</p></div>
+            <button class="text-link" data-open-view="areas">Visa alla <i data-lucide="arrow-right"></i></button>
+          </div>
+          <div id="featuredAreas" class="area-feature-grid"></div>
+
+          <article class="guide-promo">
+            <div class="guide-promo-mark"><i data-lucide="message-circle-more"></i></div>
+            <div><span class="eyebrow">RESELEDAREN</span><h2>Fråga roadbooken.</h2><p>Beskriv vem ni reser med, hur länge ni stannar och vad ni tycker om. Reseledaren skapar ett förslag utifrån de handplockade områdesguiderna.</p></div>
+            <button class="button ink" data-open-view="guide"><i data-lucide="sparkles"></i> Starta Reseledaren</button>
+          </article>
+        </section>
+      </section>
+
+      <section class="section-view page-view" data-view="areas" hidden>
+        <div class="page-intro">
+          <span class="eyebrow">FÄLTGUIDER / 07 OMRÅDEN</span>
+          <h1>Mer än stopp på en karta.</h1>
+          <p>Varje område har fått ett eget redaktionellt urval: tre vandringar, tre matställen, tre campingplatser och fem upplevelser.</p>
+        </div>
+        <div id="areaGrid" class="area-grid"></div>
+      </section>
+
+      <section class="section-view page-view map-view" data-view="map" hidden>
+        <div class="page-intro map-intro">
+          <div><span class="eyebrow">ÖVERSIKTSKARTA</span><h1>Vägen genom Skottland</h1><p>Rutten är en visuell översikt. Öppna dagens rutt för exakt vägnavigering i Google Maps.</p></div>
+          <button id="locateBtn" class="button secondary"><i data-lucide="locate-fixed"></i> Min position</button>
+        </div>
+        <div class="filter-bar" id="categoryFilters"></div>
+        <div class="map-stage">
+          <div id="map" aria-label="Karta över resan"></div>
+          <div class="map-caption"><span><strong id="visibleCount">39</strong> platser visas</span><button id="fitRouteBtn"><i data-lucide="maximize-2"></i> Hela rutten</button></div>
+        </div>
+        <div class="list-heading"><h2>Platser på kartan</h2><button id="resetFilters" class="text-link">Återställ filter</button></div>
+        <div id="mapPlaces" class="place-list"></div>
+      </section>
+
+      <section class="section-view page-view plan-view" data-view="plan" hidden>
+        <div class="page-intro"><span class="eyebrow">13 DAGAR / DAG FÖR DAG</span><h1>Resplanen</h1><p>En tydlig ordning, utan att resan känns låst.</p></div>
+        <div id="dayRail" class="day-rail"></div>
+        <article id="dayHero" class="day-hero"></article>
+        <div class="plan-layout">
+          <section><div class="list-heading"><div><span class="eyebrow">REKOMMENDERAD ORDNING</span><h2>Dagens stopp</h2></div></div><div id="timeline" class="timeline"></div></section>
+          <aside id="dayGuide" class="day-guide"></aside>
+        </div>
+      </section>
+
+      <section class="section-view page-view guide-view" data-view="guide" hidden>
+        <div class="guide-header">
+          <div class="guide-avatar"><i data-lucide="compass"></i></div>
+          <div><span class="eyebrow">SMART RESEASSISTENT</span><h1>Reseledaren</h1><p>Fråga om områden, familjeaktiviteter, vandringar, mat eller camping. Råden skapas från roadbookens verifierade urval och fungerar även utan ett AI-konto.</p></div>
+        </div>
+        <div class="chat-shell">
+          <div id="chatMessages" class="chat-messages" aria-live="polite"></div>
+          <div class="prompt-examples" id="promptExamples">
+            <button>Vi är en barnfamilj på Skye i 5 dagar. Vad ska vi göra?</button>
+            <button>Vi har en dag i Pitlochry. Tips på restauranger och sevärdheter?</button>
+            <button>Vilka vandringar passar bäst i Glencoe?</button>
+            <button>Var bör vi campa vid Loch Lomond?</button>
+          </div>
+          <form id="guideForm" class="chat-form">
+            <label class="sr-only" for="guideInput">Skriv din fråga</label>
+            <textarea id="guideInput" rows="2" placeholder="Exempel: Vi har två dagar på Harris och gillar stränder, historia och lugna vandringar…" required></textarea>
+            <button type="submit" aria-label="Skicka fråga"><i data-lucide="arrow-up"></i></button>
+          </form>
+          <p class="chat-note">Kontrollera alltid öppettider, bokningskrav och lokala vägförhållanden före avresa.</p>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Huvudnavigation">
+      <button class="active" data-nav="today"><i data-lucide="compass"></i><span>Start</span></button>
+      <button data-nav="areas"><i data-lucide="book-open"></i><span>Områden</span></button>
+      <button data-nav="map"><i data-lucide="map"></i><span>Karta</span></button>
+      <button data-nav="plan"><i data-lucide="calendar-days"></i><span>Resplan</span></button>
+      <button data-nav="guide"><i data-lucide="message-circle-more"></i><span>Reseledaren</span></button>
+    </nav>
+  </div>
+
+  <div id="placeSheet" class="sheet" aria-hidden="true">
+    <button class="sheet-backdrop" data-close-sheet aria-label="Stäng"></button>
+    <article class="sheet-card"><div class="sheet-handle"></div><button class="sheet-close" data-close-sheet aria-label="Stäng"><i data-lucide="x"></i></button><div id="sheetContent"></div></article>
+  </div>
+
+  <div id="areaSheet" class="sheet area-sheet" aria-hidden="true">
+    <button class="sheet-backdrop" data-close-area aria-label="Stäng"></button>
+    <article class="sheet-card wide"><div class="sheet-handle"></div><button class="sheet-close" data-close-area aria-label="Stäng"><i data-lucide="x"></i></button><div id="areaSheetContent"></div></article>
+  </div>
+
+  <div id="savedSheet" class="sheet saved-sheet" aria-hidden="true">
+    <button class="sheet-backdrop" data-close-saved aria-label="Stäng"></button>
+    <article class="sheet-card"><div class="sheet-handle"></div><button class="sheet-close" data-close-saved aria-label="Stäng"><i data-lucide="x"></i></button><div class="sheet-body"><span class="eyebrow">DITT URVAL</span><h2>Sparade platser</h2><div class="saved-tabs"><button class="active" data-saved-tab="favorites">Favoriter <span id="favTabCount">0</span></button><button data-saved-tab="visited">Besökta <span id="visitedTabCount">0</span></button></div><div id="savedPlaces" class="saved-grid"></div></div></article>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
