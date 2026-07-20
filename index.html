@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#18392f" />
+  <meta name="description" content="Personlig Skottland-roadbook för campervanresan 5–17 augusti." />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIINfQ3ynhOofhwr6GZaCaeABx8+ZAMpMaE=" crossorigin="" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Scotland Roadbook</title>
+</head>
+<body>
+  <div id="app">
+    <header class="hero">
+      <div class="hero__overlay"></div>
+      <div class="hero__content">
+        <span class="eyebrow">PERSONLIG ROADBOOK</span>
+        <h1>Scotland Road Trip</h1>
+        <p>5–17 augusti · Glasgow → Hebriderna → Glasgow</p>
+        <div class="hero__actions">
+          <button id="installBtn" class="btn btn--primary" hidden>📲 Installera appen</button>
+          <button id="todayBtn" class="btn btn--ghost">🧭 Visa hela resan</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="stats" aria-label="Resöversikt">
+        <article><strong>12</strong><span>nätter</span></article>
+        <article><strong>2</strong><span>färjor</span></article>
+        <article><strong id="placeCount">38</strong><span>platser</span></article>
+        <article><strong id="doneCount">0</strong><span>besökta</span></article>
+      </section>
+
+      <section class="toolbar">
+        <div class="toolbar__top">
+          <div>
+            <span class="eyebrow">UTFORSKA</span>
+            <h2>Karta och dagsplan</h2>
+          </div>
+          <button id="rainModeBtn" class="chip chip--button">☔ Regnläge</button>
+        </div>
+
+        <div id="dayScroller" class="day-scroller" aria-label="Välj resdag"></div>
+
+        <div id="categoryFilters" class="chips" aria-label="Filtrera platstyper"></div>
+      </section>
+
+      <section class="map-card">
+        <div id="map" aria-label="Topografisk karta över resan"></div>
+        <div class="map-legend">
+          <span>🚐 väg</span>
+          <span>⛴️ färja</span>
+          <span>🗺️ topografi & ortsnamn</span>
+        </div>
+      </section>
+
+      <section id="daySummary" class="day-summary"></section>
+
+      <section>
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">DAGENS STOPP</span>
+            <h2 id="listTitle">Hela resan</h2>
+          </div>
+          <button id="resetBtn" class="text-button">Återställ filter</button>
+        </div>
+        <div id="placesList" class="place-list"></div>
+      </section>
+
+      <section class="install-card">
+        <div>
+          <span class="eyebrow">INSTALLERA</span>
+          <h2>Lägg kartan på hemskärmen</h2>
+          <p>På iPhone: öppna sidan i Safari, tryck på Dela och välj <strong>Lägg till på hemskärmen</strong>. På Android visas normalt knappen <strong>Installera appen</strong>.</p>
+        </div>
+        <div class="offline-note">
+          <strong>📴 Offline</strong>
+          <p>Appens innehåll och platser fungerar offline efter första besöket. Kartutsnitt lagras när de har öppnats, men hela Skottlandskartan laddas inte ned automatiskt.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="placeDialog">
+    <button class="dialog-close" aria-label="Stäng">✕</button>
+    <div id="dialogContent"></div>
+  </dialog>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="app.js"></script>
+</body>
+</html>
