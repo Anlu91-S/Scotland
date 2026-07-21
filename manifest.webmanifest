@@ -1,7 +1,7 @@
 {
-  "name": "Scotland Roadbook",
+  "name": "Scotland Roadbook Ultimate Planner",
   "short_name": "Scotland",
-  "start_url": "./?v=320",
+  "start_url": "./?v=400",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f3f0e8",
