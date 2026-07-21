@@ -1,24 +1,17 @@
-# Scotland Roadbook 3.0 — Clean Rebuild
+# Scotland Roadbook 3.2 — Trusted Trails
 
-A static, mobile-first Scotland road trip app for GitHub Pages.
+A clean GitHub Pages PWA for the 4–20 August 2026 road trip.
 
-## Publish
+## New in 3.2
+- AllTrails links and rating snapshots for all 27 selected walks
+- Distance, ascent, estimated time, difficulty and review counts
+- Compare up to three walks
+- Official regional source links
+- Restaurant menu/booking links and Google Maps live photos, hours and reviews
+- Campsite availability and official operator links
+- Image-rich recommendation cards and itinerary entries
+- Searchable regional guides
+- More interactive Leaflet map with editorial/topographic layers
+- Source and image-transparency labels
 
-Copy the complete contents of this folder into the root of the GitHub repository. Keep `icon-192.png` and `icon-512.png` in the root, and keep all destination photographs inside `images/`.
-
-The included `.nojekyll` file tells GitHub Pages to serve the project as plain static files.
-
-## Included
-
-- English editorial interface
-- 4–20 August 2026 itinerary
-- Regional guides with walks, restaurants, campsites and experiences
-- Interactive Leaflet map with live CARTO/OpenStreetMap tiles
-- Clickable detail cards and saved recommendations
-- Local Travel Guide assistant
-- Installable PWA and service worker cache
-- Rebuilt destination image library with transparent credits in `credits.html`
-
-## Image policy
-
-Primary destination photographs show the named region or landmark. When a freely licensed photograph of an individual restaurant, campsite or operator is unavailable, the card uses a verified regional photograph and clearly labels it as such.
+AllTrails values are snapshots checked July 2026 and may change. Third-party AllTrails and Google user photos are linked rather than copied into the repository.
