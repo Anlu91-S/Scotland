@@ -3,139 +3,45 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#13251e">
-  <meta name="description" content="A personal road trip through Scotland, from Glasgow to the Outer Hebrides, the Cairngorms and Edinburgh.">
+  <meta name="theme-color" content="#10231b">
+  <meta name="description" content="Scotland Roadbook — a complete interactive road-trip planner from Glasgow to the Outer Hebrides and Edinburgh.">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon-192.png">
   <link rel="apple-touch-icon" href="./icon-192.png">
   <link rel="preconnect" href="https://unpkg.com">
-  <link rel="preconnect" href="https://a.basemaps.cartocdn.com">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="./styles.css?v=400">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+  <link rel="stylesheet" href="./styles.css?v=501">
   <title>Scotland Roadbook</title>
 </head>
 <body>
-<div id="app">
-  <header class="topbar">
-    <button class="brand" data-view="home"><span class="mark">SR</span><span><strong>Scotland Roadbook</strong><small>04–20 AUGUST 2026</small></span></button>
-    <div class="top-actions">
-      <button id="compareButton" class="round-button compare-button" aria-label="Compare walks" hidden>⇄<span id="compareCount">0</span></button>
-      <button id="savedButton" class="round-button" aria-label="Saved places">♡<span id="savedCount">0</span></button>
-      <button id="themeButton" class="round-button" aria-label="Toggle dark mode">◐</button>
-    </div>
-  </header>
-
-  <main>
-    <section class="view active" id="homeView">
-      <article class="hero">
-        <img src="./images/glencoe.jpg" alt="The dramatic mountains and valley of Glen Coe">
-        <div class="hero-overlay"></div>
-        <div class="hero-copy">
-          <p class="kicker light">A ROAD TRIP THROUGH SCOTLAND</p>
-          <h1>A journey through<br><em>Lochs and Legends</em></h1>
-          <p class="hero-text">From Glasgow’s city lights to the Atlantic edge, the road winds through lochs, glens, islands and ancient strongholds before reaching Edinburgh at the height of Fringe season.</p>
-          <div class="hero-actions">
-            <button class="button gold" data-view="plan">Open the itinerary</button>
-            <button class="button glass" data-view="regions">Explore the regions</button>
-          </div>
-        </div>
-        <div class="hero-date"><strong>17</strong><span>DAYS</span></div>
-      </article>
-
-      <section class="content">
-        <div class="section-heading">
-          <div><p class="kicker">FIELD GUIDES</p><h2>Scotland, one landscape at a time.</h2><p>Open a region for carefully selected walks, restaurants, campsites and experiences, with practical notes and direct links.</p></div>
-          <button class="text-button" data-view="regions">View all regions →</button>
-        </div>
-        <div id="homeRegions" class="region-grid featured"></div>
-
-        <article class="guide-banner">
-          <div><p class="kicker">THE TRAVEL GUIDE</p><h2>Ask the roadbook.</h2><p>Tell the guide how long you have, who you are travelling with and what matters to you. It will shape a practical recommendation from the curated content in this roadbook.</p></div>
-          <button class="button ink" data-view="guide">Open the Travel Guide</button>
-        </article>
-      </section>
-    </section>
-
-    <section class="view page" id="regionsView" hidden>
-      <header class="page-intro">
-        <p class="kicker">REGIONAL FIELD GUIDES</p>
-        <h1>From city streets to Atlantic edges.</h1>
-        <p>Each chapter gives you context, essential highlights and expandable recommendations. Every chapter combines visual carousels, decision-ready facts, live maps, official links and a deeper guide for each recommendation.</p>
-      </header>
-      <div class="region-toolbar">
-        <label><span>Search regions and highlights</span><input id="regionSearch" type="search" placeholder="Try Skye, castles, beaches…"></label>
-        <strong id="regionResultCount">9 regional guides</strong>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div id="app-shell">
+    <header class="topbar">
+      <button class="brand" data-route="#home" aria-label="Scotland Roadbook home">
+        <span class="brand-mark">SR</span>
+        <span><strong>Scotland Roadbook</strong><small>04–20 AUGUST 2026</small></span>
+      </button>
+      <div class="top-actions">
+        <button class="icon-button" data-route="#search" aria-label="Search">⌕</button>
+        <button class="icon-button saved-button" data-route="#saved" aria-label="Saved items">♡<span id="saved-count">0</span></button>
+        <button class="icon-button" data-route="#settings" aria-label="Settings">⚙</button>
       </div>
-      <div id="regionGrid" class="region-grid"></div>
-    </section>
-
-    <section class="view page" id="mapView" hidden>
-      <header class="page-intro split">
-        <div><p class="kicker">INTERACTIVE MAP</p><h1>The route across Scotland</h1><p>Pan freely, use the mouse wheel or pinch to zoom, and watch additional towns and roads appear as the map scale changes. Select any marker to open its details. Switch between the editorial and topographic basemaps; the route line is schematic, while Google Maps links provide turn-by-turn directions.</p></div>
-        <div class="map-controls"><button id="fitRoute" class="button outline">Fit complete route</button><button id="locateMe" class="button outline">My location</button></div>
-      </header>
-      <div class="map-shell">
-        <div id="map"></div>
-        <div class="map-legend"><span><i class="route-dot"></i> Main route</span><span><i class="stop-dot"></i> Overnight stop</span></div>
-      </div>
-      <div id="mapStopList" class="stop-list"></div>
-    </section>
-
-    <section class="view page" id="planView" hidden>
-      <header class="page-intro">
-        <p class="kicker">04–20 AUGUST 2026</p>
-        <h1>The road, day by day.</h1>
-        <p>A flexible sequence rather than a rigid timetable. Select a date to see the route, priorities, travel notes and activities.</p>
-      </header>
-      <div id="dayTabs" class="day-tabs"></div>
-      <article id="dayPanel" class="day-panel"></article>
-    </section>
-
-    <section class="view page" id="guideView" hidden>
-      <header class="guide-head">
-        <div class="guide-symbol">✦</div>
-        <div><p class="kicker">THE TRAVEL GUIDE</p><h1>What would make the journey yours?</h1><p>Ask about family activities, walks, restaurants, campsites or how to spend a limited number of days in one region.</p></div>
-      </header>
-      <div class="chat">
-        <div id="messages" class="messages"></div>
-        <div id="examples" class="examples">
-          <button>We have five days on the Isle of Skye and are travelling with children.</button>
-          <button>We have one day in Inverness. What should we prioritise?</button>
-          <button>Recommend restaurants and easy walks in the Cairngorms.</button>
-        </div>
-        <form id="guideForm">
-          <textarea id="guideInput" placeholder="Ask the Travel Guide…" required></textarea>
-          <button type="submit">Send</button>
-        </form>
-        <small>The Travel Guide uses this roadbook’s curated recommendations. Always confirm opening hours, bookings, ferry times and local access conditions directly with the operator.</small>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <span>Scotland Roadbook · Ultimate Planner 4.0</span>
-    <a href="./credits.html">Photography credits</a>
-  </footer>
-
-  <nav class="bottom-nav">
-    <button class="active" data-view="home">Home</button>
-    <button data-view="regions">Regions</button>
-    <button data-view="map">Map</button>
-    <button data-view="plan">Itinerary</button>
-    <button data-view="guide">Travel Guide</button>
-  </nav>
-</div>
-
-<div id="sheet" class="sheet" aria-hidden="true">
-  <button class="sheet-backdrop" data-close aria-label="Close"></button>
-  <article class="sheet-card">
-    <div class="sheet-handle"></div>
-    <button class="sheet-close" data-close aria-label="Close">×</button>
-    <div id="sheetContent"></div>
-  </article>
-</div>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="./app.js?v=400"></script>
+    </header>
+    <main id="main" tabindex="-1"></main>
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <button data-route="#home">Home</button>
+      <button data-route="#itinerary">Route</button>
+      <button data-route="#regions">Regions</button>
+      <button data-route="#map">Map</button>
+      <button data-route="#guide">Travel Guide</button>
+    </nav>
+  </div>
+  <div id="toast-region" class="toast-region" aria-live="polite"></div>
+  <div id="modal-root"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script type="module" src="./app.js?v=501"></script>
 </body>
 </html>

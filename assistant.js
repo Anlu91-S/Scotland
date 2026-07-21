@@ -1,0 +1,33 @@
+
+import {ITEMS,REGIONS,REGION_BY_ID,CATEGORY_META} from "./data.js";
+const aliases={glasgow:["glasgow"],"loch-lomond":["loch lomond","lomond","balmaha","luss"],glencoe:["glen coe","glencoe","ballachulish","kinlochleven"],skye:["skye","portree","trotternish"],hebrides:["harris","lewis","outer hebrides","tarbert","stornoway"],inverness:["inverness","loch ness","culloden"],cairngorms:["cairngorm","cairngorms","aviemore","braemar"],central:["stirling","fife","culross","crail","st andrews"],edinburgh:["edinburgh","fringe","leith"]};
+const intents={restaurant:["restaurant","food","eat","dinner","lunch","menu","table"],hike:["walk","hike","trail","summit","mountain"],hotel:["hotel","stay","room","accommodation"],camping:["camp","campsite","campervan","motorhome","pitch"],experience:["do","see","activity","attraction","museum","castle","distillery","visit"],plan:["plan","itinerary","day","days","schedule","route"]};
+function norm(s){return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
+function detectRegion(q){q=norm(q);for(const [id,words] of Object.entries(aliases))if(words.some(w=>q.includes(w)))return id;return null}
+function detectIntent(q){q=norm(q);let best="experience",score=0;for(const [intent,words] of Object.entries(intents)){const s=words.filter(w=>q.includes(w)).length;if(s>score){score=s;best=intent}}return best}
+function hash(s){let h=2166136261;for(const c of s)h=(h^c.charCodeAt(0))*16777619;return Math.abs(h>>>0)}
+function profileTerms(profile){return [profile.party,profile.pace,profile.budget,...(profile.interests||[]),...(profile.dietary||[])].filter(Boolean).map(norm)}
+function scoreItem(item,q,profile){const text=norm([item.name,item.hook,...item.tags,item.story?.why,item.story?.expect].join(" "));let score=0;const words=norm(q).split(/\s+/).filter(w=>w.length>3);for(const w of words)if(text.includes(w))score+=2;for(const w of profileTerms(profile))if(text.includes(w))score+=1.4;if(/child|children|family|kids/.test(norm(q))&&item.tags.includes("family"))score+=5;if(/easy|gentle|relaxed/.test(norm(q))&&item.tags.includes("easy"))score+=4;if(/hard|challenging|summit/.test(norm(q))&&(item.tags.includes("hard")||item.tags.includes("summit")))score+=4;if(/rain|indoor/.test(norm(q))&&(item.tags.includes("indoor")||item.tags.includes("rain")||item.tags.includes("rain-flexible")))score+=5;if(/history|castle|heritage/.test(norm(q))&&item.tags.some(t=>["history","castle","heritage","prehistoric"].includes(t)))score+=4;if(/whisky|distillery/.test(norm(q))&&item.tags.some(t=>["whisky","distillery"].includes(t)))score+=5;if(/romantic/.test(norm(q))&&item.tags.includes("romantic"))score+=4;return score+((hash(item.id+q)%100)/100)}
+export function rankItems({query="",regionId=null,category=null,profile={},limit=8}){return ITEMS.filter(x=>(!regionId||x.regionId===regionId)&&(!category||x.category===category)).map(x=>({item:x,score:scoreItem(x,query,profile)})).sort((a,b)=>b.score-a.score).slice(0,limit).map(x=>x.item)}
+function daysFrom(q){const m=norm(q).match(/(\d+)\s*(day|days|hour|hours)/);return m?{n:+m[1],unit:m[2]}:{n:1,unit:"day"}}
+function varied(seed,choices){return choices[hash(seed)%choices.length]}
+export function localAnswer(query,profile={}){const regionId=detectRegion(query);const intent=detectIntent(query);const duration=daysFrom(query);const region=regionId?REGION_BY_ID[regionId]:null;const q=norm(query);let category=intent;if(intent==="plan")category=null;const party=/child|children|family|kids/.test(q)?"family":profile.party;
+ const selected=rankItems({query,regionId,category,profile:{...profile,party},limit:intent==="plan"?10:6});
+ const place=region?region.name:"the route";const opener=varied(query,[`For ${place}, I would build the answer around these choices.`,`The strongest fit for your request in ${place} is a focused, realistic selection.`,`To keep ${place} enjoyable rather than rushed, start with the following.`]);
+ let text=opener;
+ if(intent==="plan"){
+   const hikes=rankItems({query,regionId,category:"hike",profile:{...profile,party},limit:2});
+   const experiences=rankItems({query,regionId,category:"experience",profile:{...profile,party},limit:4});
+   const food=rankItems({query,regionId,category:"restaurant",profile:{...profile,party},limit:2});
+   text+=`\n\nFor ${duration.n} ${duration.unit}${duration.n===1?"":"s"}, use one anchor experience per half-day. Begin with ${experiences[0]?.name||"a regional highlight"}, keep ${hikes[0]?.name||"an appropriate walk"} as the main outdoor commitment, and finish near ${food[0]?.name||"a well-placed restaurant"}. ${party==="family"?"Keep a flexible indoor alternative and avoid stacking two demanding walks on the same day.":"Leave enough margin for parking, narrow roads and unplanned stops."}`;
+   return {text,itemIds:[...experiences,...hikes,...food].filter(Boolean).map(x=>x.id),mode:"local"};
+ }
+ text+=`\n\n${selected.map((x,i)=>`${i+1}. ${x.name} — ${x.hook}.`).join("\n")}`;
+ if(intent==="hike")text+=`\n\nCompare distance, ascent and difficulty inside each trail page. Ratings are shown only where a verified AllTrails snapshot exists; the live trail link remains the final check.`;
+ if(intent==="restaurant")text+=`\n\nOpen a restaurant to see integrated photographs, live Google details when connected, menu discovery and booking options at the end of the page.`;
+ if(!region)text+=`\n\nMention a region, number of days, who is travelling and the pace you prefer for a more precise plan.`;
+ return {text,itemIds:selected.map(x=>x.id),mode:"local"}
+}
+export function assistantContext(query,profile={}){const regionId=detectRegion(query);const intent=detectIntent(query);const items=rankItems({query,regionId,category:intent==="plan"?null:intent,profile,limit:30});return {region:regionId?REGION_BY_ID[regionId]:null,intent,profile,items:items.map(x=>({id:x.id,name:x.name,category:x.category,region:REGION_BY_ID[x.regionId]?.name,hook:x.hook,tags:x.tags,trail:x.trail,officialUrl:x.officialUrl,story:x.story}))}}
+export function conflictCheck(day,planned){const issues=[];const items=planned.map(id=>ITEMS.find(x=>x.id===id)).filter(Boolean);const hard=items.filter(x=>x.category==="hike"&&["Hard","Expert"].includes(x.trail?.difficulty));if(hard.length>1)issues.push("More than one demanding walk is planned for the same day.");if(items.length>5)issues.push("The day contains more than five major stops and may feel rushed.");const other=items.filter(x=>x.regionId!==day.regionId);if(other.length>1)issues.push("Several stops sit outside the day’s main region and may add avoidable driving.");return issues}
+export {detectRegion,detectIntent};
