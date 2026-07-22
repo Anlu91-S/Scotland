@@ -1,5 +1,5 @@
 
-const CACHE_PREFIX="sr-v5:";
+const CACHE_PREFIX="sr-v502:";
 const defaultConfig={apiBase:"",liveEnrichment:true};
 function loadConfig(){try{return {...defaultConfig,...JSON.parse(localStorage.getItem(CACHE_PREFIX+"config")||"{}")}}catch{return {...defaultConfig}}}
 function saveConfig(config){localStorage.setItem(CACHE_PREFIX+"config",JSON.stringify(config))}
@@ -18,17 +18,25 @@ export const Integrations={
  async metadata(item){if(!item.officialUrl)return null;const key=`meta:${item.id}`;const cached=cacheGet(key,1000*60*60*24*7);if(cached)return cached;const data=await workerFetch("/api/metadata",{url:item.officialUrl,itemId:item.id});cacheSet(key,data);return data},
  async pageSummary(url,question){return workerFetch("/api/page-summary",{url,question})},
  async ai(payload){return workerFetch("/api/ai",payload)},
- async media(item,region,{includeLive=true}={}){
+ async tripadvisor(item){
+   if(!["restaurant","hotel","camping","experience"].includes(item.category))return null;
+   const category=item.category==="restaurant"?"restaurants":item.category==="experience"?"attractions":"hotels";
+   return workerFetch("/api/tripadvisor",{query:item.name+" "+(item.googleQuery||"Scotland"),category,itemId:item.id});
+ },
+ async media(item,region,{includeLive=true,includeTripadvisor=false}={}){
    const local=(item.localImages||[]).map(url=>({url,source:"Roadbook collection",sourceUrl:null,credit:""}));
-   let official=[],google=[],commons=[];const cfg=loadConfig();
+   let official=[],google=[],tripadvisor=[],commons=[];const cfg=loadConfig();
    if(includeLive&&cfg.liveEnrichment&&cfg.apiBase){
-     const [m,p]=await Promise.allSettled([this.metadata(item),this.place(item)]);
-     if(m.status==="fulfilled"&&m.value)official=(m.value.images||[]).map(x=>({url:x.url,source:"Official website",sourceUrl:item.officialUrl,credit:x.credit||""}));
-     if(p.status==="fulfilled"&&p.value)google=(p.value.photos||[]).map(x=>({url:x.url,source:"Google Places",sourceUrl:p.value.googleMapsUri,credit:x.attribution||""}));
+     const requests=[this.metadata(item),this.place(item)];
+     if(includeTripadvisor&&["restaurant","hotel","camping","experience"].includes(item.category))requests.push(this.tripadvisor(item));
+     const results=await Promise.allSettled(requests);const [m,p,t]=results;
+     if(m?.status==="fulfilled"&&m.value)official=(m.value.images||[]).map(x=>({url:x.url,source:"Official website",sourceUrl:item.officialUrl,credit:x.credit||""}));
+     if(p?.status==="fulfilled"&&p.value)google=(p.value.photos||[]).map(x=>({url:x.url,source:"Google Places",sourceUrl:p.value.googleMapsUri,credit:x.attribution||""}));
+     if(t?.status==="fulfilled"&&t.value)tripadvisor=(t.value.photos||[]).map(x=>({url:x.url,source:"Tripadvisor",sourceUrl:t.value.webUrl,credit:x.credit||x.caption||""}));
    }
    if(item.category==="hike"||item.category==="experience")commons=await wikimedia(item,region);
    const fallback=[{url:region.image,source:"Regional roadbook image",sourceUrl:region.source?.url,credit:""}];
-   return dedupeMedia([...local,...official,...google,...commons,...fallback]).slice(0,8);
+   return dedupeMedia([...local,...official,...google,...tripadvisor,...commons,...fallback]).slice(0,10);
  },
  async live(item){const cfg=loadConfig();if(!cfg.liveEnrichment||!cfg.apiBase)return null;try{return await this.place(item)}catch{return null}},
  clearCache(){Object.keys(localStorage).filter(k=>k.startsWith(CACHE_PREFIX)&&k!==CACHE_PREFIX+"config").forEach(k=>localStorage.removeItem(k))}
