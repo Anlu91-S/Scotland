@@ -1,0 +1,9 @@
+SCOTLAND ROADBOOK 5.2 — GITHUB UPLOAD
+
+1. In the root of your Scotland GitHub repository, choose Add file > Upload files.
+2. Upload every root-level file from this package. Files with identical names will be updated automatically when you commit.
+3. Open the existing images folder in GitHub and upload all files from this package's images folder.
+4. Commit the changes and wait for the GitHub Pages deployment to turn green.
+5. Open: https://anlu91-s.github.io/Scotland/?v=520
+
+You do not need to delete the repository first.

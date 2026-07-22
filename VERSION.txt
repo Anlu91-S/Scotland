@@ -1,2 +1,2 @@
-Scotland Roadbook 5.0.2 — Expedition Studio + Tripadvisor
-Build: v502
+Scotland Roadbook 5.2 — Image-Led Discovery
+Build: v520

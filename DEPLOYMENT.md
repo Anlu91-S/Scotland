@@ -1,6 +1,8 @@
-# Deployment
+# Deploy v5.2
 
-1. Upload all frontend files and folders to the GitHub repository root.
-2. Wait for GitHub Pages to complete.
-3. Open `https://anlu91-s.github.io/Scotland/?v=502`.
-4. Optional live service: deploy `worker/`, add OpenAI, Google Places and Tripadvisor secrets, then save the Worker URL under Settings.
+1. Upload all root files to the root of the GitHub repository. Files with the same names are updated.
+2. Open `images/` and upload the image files from this package. Existing same-name images are replaced.
+3. Wait for the GitHub Pages deployment to turn green.
+4. Open `https://anlu91-s.github.io/Scotland/?v=520`.
+
+The `worker/` and `tests/` folders are optional and are not required for the standard GitHub Pages site.
