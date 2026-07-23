@@ -1,4 +1,4 @@
-# Scotland Roadbook 5.2 — Image-Led Discovery
+# Scotland Roadbook 5.3 — Premium Visual Framework
 
 A cleaner, image-first rebuild of the Scotland road-trip planner.
 

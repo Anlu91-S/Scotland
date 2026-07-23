@@ -26,7 +26,7 @@ button,input,textarea,select{font:inherit}button{cursor:pointer;color:inherit}.s
 @media print{.topbar,.bottom-nav,.button,.icon-button,.carousel-controls,.compare-dock{display:none!important}body{padding:0;background:white;color:black}.page{max-width:none;padding:0}.day-card{break-inside:avoid;box-shadow:none}.hero{min-height:400px}.region-jump{display:none}}
 
 
-/* v5.2 — image-led discovery, cleaner regional hierarchy and maps last */
+/* v5.3 — premium visual framework */
 .hero{min-height:640px}.hero-copy{padding-bottom:90px}.editorial-banner{grid-template-columns:1fr;max-width:1180px}.profile-mini,.hero-stats,.counts{display:none!important}
 .region-card{min-height:520px;cursor:pointer}.region-card:after{background:linear-gradient(0deg,rgba(5,16,11,.94),rgba(5,16,11,.08) 75%)}.region-card-copy{bottom:28px}.region-card-date{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.78);font-weight:800}.region-card h3{font-size:clamp(42px,4vw,61px);margin:9px 0 12px}.region-card p{max-width:92%;font-size:16px;line-height:1.55}.region-card-link{display:flex;align-items:center;gap:8px;margin-top:18px;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.09em}.region-card-link b{font-size:18px}
 .region-date{font:800 12px/1.2 var(--sans)!important;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.82);margin:0 0 12px!important}.region-hero-copy{max-width:1040px}.region-hero-copy>p:last-child{font-size:clamp(20px,2vw,27px)}
@@ -38,3 +38,11 @@ button,input,textarea,select{font:inherit}button{cursor:pointer;color:inherit}.s
 @media(max-width:720px){.hero{min-height:650px}.region-card{min-height:430px}.card-media{height:260px}.gallery-controls{left:10px;right:10px}.gallery-controls button{width:52px;height:52px}.detail-gallery,.gallery-slide{min-height:460px;height:58vh}.day-card{grid-template-columns:1fr}.region-card p{max-width:100%}}
 
 .detail-quick{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}.detail-quick div{border-bottom:0!important}.detail-quick div:last-child{border-right:0}
+
+
+/* v5.3 premium visual framework */
+.region-card-link{margin-top:16px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.92)}
+.story-card textarea{width:100%;min-height:120px;padding:15px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);resize:vertical}
+.map-ending details{margin-top:18px}
+.map-ending summary{cursor:pointer;font-weight:800;list-style:none}
+.map-ending summary::-webkit-details-marker{display:none}
